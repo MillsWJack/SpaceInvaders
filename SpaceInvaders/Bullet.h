@@ -6,7 +6,6 @@ public:
 	Bullet(sf::Vector2f size, sf::Vector2f position);
 	~Bullet();
 
-	void SpawnBullet(sf::Vector2f& playerPosition);
 	void Update();
 	void Render(sf::RenderWindow& window);
 

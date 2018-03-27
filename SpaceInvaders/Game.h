@@ -19,6 +19,9 @@ public:
 	void Update();
 	void Render();
 
+	bool HasCollided(Bullet* bullet, Alien* alien);
+	void HandleCollision(Alien* alien);
+
 	window* GetWindow() { return &m_window; }
 
 private:

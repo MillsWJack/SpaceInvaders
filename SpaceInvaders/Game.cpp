@@ -4,6 +4,11 @@ Game::Game():
 	m_window(sf::Vector2u(800, 600), "Window"),
 	m_player(sf::Vector2f(800 / 2, 500), sf::Vector2f(100, 25), 5)
 {
+	for (int i = 1; i < 13; i++)
+	{
+		Alien* alien = new Alien(sf::Vector2f(i * 58, 50), sf::Vector2f(40, 40));
+		m_alienList.push_back(alien);
+	}
 }
 
 Game::~Game()
@@ -55,6 +60,26 @@ void Game::Update()
 			iter++;
 		}
 	}
+
+	for (std::vector<Alien*>::iterator alienIter = m_alienList.begin(); alienIter != m_alienList.end();)
+	{
+		for (std::vector<Bullet*>::iterator bulletIter = m_bulletList.begin(); bulletIter != m_bulletList.end();)
+		{
+			if (HasCollided((*bulletIter), (*alienIter)))
+			{
+				HandleCollision((*alienIter));
+
+				//Pop affected alien and bullet from heap
+				alienIter = m_alienList.erase(alienIter);
+				bulletIter = m_bulletList.erase(bulletIter);
+			}
+			else
+			{
+				bulletIter++;
+			}
+		}
+		alienIter++;
+	}
 }
 
 void Game::Render()
@@ -67,6 +92,30 @@ void Game::Render()
 	{
 		(*iter)->Render(*(m_window.GetRenderWindow()));
 	}
+	for (std::vector<Alien*>::iterator iter = m_alienList.begin(); iter != m_alienList.end(); iter++)
+	{
+		if ((*iter)->IsVisible())
+		{
+			(*iter)->Render(*(m_window.GetRenderWindow()));
+		}
+	}
 
 	m_window.EndDraw();
+}
+
+bool Game::HasCollided(Bullet* bullet, Alien* alien)
+{
+	if (bullet->GetPosition().y <= alien->GetPosition().y + alien->GetSize().y &&
+		bullet->GetPosition().x >= alien->GetPosition().x &&
+		bullet->GetPosition().x <= alien->GetPosition().x + alien->GetSize().x)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+void Game::HandleCollision(Alien* alien)
+{
+	alien->SetVisible(false);
 }
