@@ -4,10 +4,13 @@ Game::Game():
 	m_window(sf::Vector2u(800, 600), "Window"),
 	m_player(sf::Vector2f(800 / 2, 500), sf::Vector2f(100, 25), 5)
 {
-	for (int i = 1; i < 13; i++)
+	for (int j = 1; j < 2; j++)
 	{
-		Alien* alien = new Alien(sf::Vector2f(i * 58, 50), sf::Vector2f(40, 40));
-		m_alienList.push_back(alien);
+		for (int i = 1; i < 13; i++)
+		{
+			Alien* alien = new Alien(sf::Vector2f(i * 58, j * 50), sf::Vector2f(40, 40));
+			m_alienList.push_back(alien);
+		}
 	}
 }
 
@@ -67,18 +70,24 @@ void Game::Update()
 		{
 			if (HasCollided((*bulletIter), (*alienIter)))
 			{
-				HandleCollision((*alienIter));
+				(*alienIter)->SetVisibility(false);
 
 				//Pop affected alien and bullet from heap
 				alienIter = m_alienList.erase(alienIter);
 				bulletIter = m_bulletList.erase(bulletIter);
+
+				std::cout << "Alien removed.\n";
+				std::cout << m_alienList.size() << std::endl;
 			}
 			else
 			{
 				bulletIter++;
 			}
 		}
-		alienIter++;
+		if (m_alienList.size() != 0)
+		{
+			alienIter++;
+		}
 	}
 }
 
@@ -113,9 +122,4 @@ bool Game::HasCollided(Bullet* bullet, Alien* alien)
 	}
 
 	return false;
-}
-
-void Game::HandleCollision(Alien* alien)
-{
-	alien->SetVisible(false);
 }

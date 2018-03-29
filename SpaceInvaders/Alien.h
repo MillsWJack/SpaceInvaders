@@ -12,7 +12,7 @@ public:
 	void ShiftDown();
 	void InvertDir();
 
-	void SetVisible(bool setter) { m_isVisible = setter; }
+	void SetVisibility(bool setter) { m_isVisible = setter; }
 
 	sf::Vector2f& GetPosition() { return m_position; }
 	sf::Vector2f& GetSize() { return m_size; }
