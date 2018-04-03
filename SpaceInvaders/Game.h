@@ -20,7 +20,6 @@ public:
 	void Render();
 
 	bool HasCollided(Bullet* bullet, Alien* alien);
-
 	window* GetWindow() { return &m_window; }
 
 private:

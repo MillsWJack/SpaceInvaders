@@ -4,7 +4,7 @@ Game::Game():
 	m_window(sf::Vector2u(800, 600), "Window"),
 	m_player(sf::Vector2f(800 / 2, 500), sf::Vector2f(100, 25), 5)
 {
-	for (int j = 1; j < 2; j++)
+	for (int j = 1; j < 3; j++)
 	{
 		for (int i = 1; i < 13; i++)
 		{
@@ -64,29 +64,33 @@ void Game::Update()
 		}
 	}
 
-	for (std::vector<Alien*>::iterator alienIter = m_alienList.begin(); alienIter != m_alienList.end();)
+	//Handle the collisions of bullets and aliens
+	for (std::vector<Bullet*>::iterator bulletIter = m_bulletList.begin(); bulletIter != m_bulletList.end(); bulletIter++)
 	{
-		for (std::vector<Bullet*>::iterator bulletIter = m_bulletList.begin(); bulletIter != m_bulletList.end();)
+		for (std::vector<Alien*>::iterator alienIter = m_alienList.begin(); alienIter != m_alienList.end(); alienIter++)
 		{
-			if (HasCollided((*bulletIter), (*alienIter)))
+			if (HasCollided(*bulletIter, *alienIter))
 			{
-				(*alienIter)->SetVisibility(false);
+				if (alienIter == m_alienList.end() - 1)
+				{
+					m_alienList.erase(alienIter);
+					alienIter = m_alienList.begin();
+				}
+				else
+				{
+					alienIter = m_alienList.erase(alienIter);
+				}
 
-				//Pop affected alien and bullet from heap
-				alienIter = m_alienList.erase(alienIter);
-				bulletIter = m_bulletList.erase(bulletIter);
-
-				std::cout << "Alien removed.\n";
-				std::cout << m_alienList.size() << std::endl;
+				if (bulletIter == m_bulletList.end() - 1)
+				{
+					m_bulletList.erase(bulletIter);
+					return;
+				}
+				else
+				{
+					bulletIter = m_bulletList.erase(bulletIter);
+				}
 			}
-			else
-			{
-				bulletIter++;
-			}
-		}
-		if (m_alienList.size() != 0)
-		{
-			alienIter++;
 		}
 	}
 }
