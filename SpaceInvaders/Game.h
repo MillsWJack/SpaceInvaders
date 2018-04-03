@@ -19,7 +19,7 @@ public:
 	void Update();
 	void Render();
 
-	bool HasCollided(Bullet* bullet, Alien* alien);
+	bool HasCollided(Bullet* const bullet, Alien* const alien);
 	window* GetWindow() { return &m_window; }
 
 private:

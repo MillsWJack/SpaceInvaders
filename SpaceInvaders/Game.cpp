@@ -51,7 +51,7 @@ void Game::Update()
 
 	m_player.Update();
 	
-	for (std::vector<Bullet*>::iterator iter = m_bulletList.begin(); iter != m_bulletList.end();)
+	for (std::vector<Bullet*>::const_iterator iter = m_bulletList.begin(); iter != m_bulletList.end();)
 	{
 		if ((*iter)->GetPosition().y < 0)
 		{
@@ -65,16 +65,23 @@ void Game::Update()
 	}
 
 	//Handle the collisions of bullets and aliens
-	for (std::vector<Bullet*>::iterator bulletIter = m_bulletList.begin(); bulletIter != m_bulletList.end(); bulletIter++)
+	for (std::vector<Bullet*>::const_iterator bulletIter = m_bulletList.begin(); bulletIter != m_bulletList.end(); bulletIter++)
 	{
-		for (std::vector<Alien*>::iterator alienIter = m_alienList.begin(); alienIter != m_alienList.end(); alienIter++)
+		for (std::vector<Alien*>::const_iterator alienIter = m_alienList.begin(); alienIter != m_alienList.end();)
 		{
 			if (HasCollided(*bulletIter, *alienIter))
 			{
 				if (alienIter == m_alienList.end() - 1)
 				{
 					m_alienList.erase(alienIter);
-					alienIter = m_alienList.begin();
+					if (m_alienList.size() != 0)
+					{
+						alienIter = m_alienList.begin();
+					}
+					else
+					{
+						alienIter = m_alienList.end();
+					}
 				}
 				else
 				{
@@ -91,6 +98,10 @@ void Game::Update()
 					bulletIter = m_bulletList.erase(bulletIter);
 				}
 			}
+			else
+			{
+				alienIter++;
+			}
 		}
 	}
 }
@@ -101,22 +112,19 @@ void Game::Render()
 
 	m_player.Render(*(m_window.GetRenderWindow()));
 	
-	for (std::vector<Bullet*>::iterator iter = m_bulletList.begin(); iter != m_bulletList.end(); iter++)
+	for (std::vector<Bullet*>::const_iterator iter = m_bulletList.begin(); iter != m_bulletList.end(); iter++)
 	{
 		(*iter)->Render(*(m_window.GetRenderWindow()));
 	}
-	for (std::vector<Alien*>::iterator iter = m_alienList.begin(); iter != m_alienList.end(); iter++)
+	for (std::vector<Alien*>::const_iterator iter = m_alienList.begin(); iter != m_alienList.end(); iter++)
 	{
-		if ((*iter)->IsVisible())
-		{
-			(*iter)->Render(*(m_window.GetRenderWindow()));
-		}
+		(*iter)->Render(*(m_window.GetRenderWindow()));
 	}
 
 	m_window.EndDraw();
 }
 
-bool Game::HasCollided(Bullet* bullet, Alien* alien)
+bool Game::HasCollided(Bullet* const bullet, Alien* const alien)
 {
 	if (bullet->GetPosition().y <= alien->GetPosition().y + alien->GetSize().y &&
 		bullet->GetPosition().x >= alien->GetPosition().x &&

@@ -4,7 +4,6 @@ Alien::Alien(sf::Vector2f position, sf::Vector2f size):
 	m_position(position),
 	m_size(size)
 {
-	m_isVisible = true;
 	m_rect.setSize(m_size);
 	m_moveDir = 1;
 }
