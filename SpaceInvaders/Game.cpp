@@ -65,9 +65,11 @@ void Game::Update()
 	}
 
 	//Handle the collisions of bullets and aliens
-	for (std::vector<Bullet*>::const_iterator bulletIter = m_bulletList.begin(); bulletIter != m_bulletList.end(); bulletIter++)
+	//TODO - Refactor to a new function HandleCollisions()
+	//TODO - Maybe use a linked list instead of vector for alien?
+	for (std::vector<Bullet*>::iterator bulletIter = m_bulletList.begin(); bulletIter != m_bulletList.end(); bulletIter++)
 	{
-		for (std::vector<Alien*>::const_iterator alienIter = m_alienList.begin(); alienIter != m_alienList.end();)
+		for (std::vector<Alien*>::iterator alienIter = m_alienList.begin(); alienIter != m_alienList.end();)
 		{
 			if (HasCollided(*bulletIter, *alienIter))
 			{
