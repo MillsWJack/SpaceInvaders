@@ -44,13 +44,12 @@ void Game::Update()
 		{
 			Bullet* bullet = new Bullet(sf::Vector2f(4, 10), m_player.GetPosition());
 			m_bulletList.push_back(bullet);
-			std::cout << "Bullet added.\n";
-			std::cout << m_bulletList.size() << std::endl;
 		}
 	}
 
 	m_player.Update();
 	
+	//Bullet cleanup if off the screen, otherwise update
 	for (std::vector<Bullet*>::const_iterator iter = m_bulletList.begin(); iter != m_bulletList.end();)
 	{
 		if ((*iter)->GetPosition().y < 0)
@@ -65,39 +64,17 @@ void Game::Update()
 	}
 
 	//Handle the collisions of bullets and aliens
-	//TODO - Refactor to a new function HandleCollisions()
-	//TODO - Maybe use a linked list instead of vector for alien?
+	//TODO - Maybe use a linked list instead of vector for aliens?
 	for (std::vector<Bullet*>::iterator bulletIter = m_bulletList.begin(); bulletIter != m_bulletList.end(); bulletIter++)
 	{
 		for (std::vector<Alien*>::iterator alienIter = m_alienList.begin(); alienIter != m_alienList.end();)
 		{
 			if (HasCollided(*bulletIter, *alienIter))
 			{
-				if (alienIter == m_alienList.end() - 1)
+				HandleCollision(alienIter);
+				if (BulletListEmpty(bulletIter))
 				{
-					m_alienList.erase(alienIter);
-					if (m_alienList.size() != 0)
-					{
-						alienIter = m_alienList.begin();
-					}
-					else
-					{
-						alienIter = m_alienList.end();
-					}
-				}
-				else
-				{
-					alienIter = m_alienList.erase(alienIter);
-				}
-
-				if (bulletIter == m_bulletList.end() - 1)
-				{
-					m_bulletList.erase(bulletIter);
 					return;
-				}
-				else
-				{
-					bulletIter = m_bulletList.erase(bulletIter);
 				}
 			}
 			else
@@ -136,4 +113,38 @@ bool Game::HasCollided(Bullet* const bullet, Alien* const alien)
 	}
 
 	return false;
+}
+
+void Game::HandleCollision(std::vector<Alien*>::const_iterator& alienIter)
+{
+	if (alienIter == m_alienList.end() - 1)
+	{
+		m_alienList.erase(alienIter);
+		if (m_alienList.size() != 0)
+		{
+			alienIter = m_alienList.begin();
+		}
+		else
+		{
+			alienIter = m_alienList.end();
+		}
+	}
+	else
+	{
+		alienIter = m_alienList.erase(alienIter);
+	}
+}
+
+bool Game::BulletListEmpty(std::vector<Bullet*>::const_iterator& bulletIter)
+{
+	if (bulletIter == m_bulletList.end() - 1)
+	{
+		m_bulletList.erase(bulletIter);
+		return true;
+	}
+	else
+	{
+		bulletIter = m_bulletList.erase(bulletIter);
+		return false;
+	}
 }

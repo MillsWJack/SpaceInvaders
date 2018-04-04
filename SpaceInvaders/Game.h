@@ -20,7 +20,10 @@ public:
 	void Render();
 
 	bool HasCollided(Bullet* const bullet, Alien* const alien);
-	window* GetWindow() { return &m_window; }
+	void HandleCollision(std::vector<Alien*>::const_iterator& alienIter);
+	bool BulletListEmpty(std::vector<Bullet*>::const_iterator& bulletIter);
+
+	inline window* GetWindow() { return &m_window; }
 
 private:
 	window m_window;
