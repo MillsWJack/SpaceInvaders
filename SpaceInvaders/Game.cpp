@@ -2,11 +2,11 @@
 
 Game::Game():
 	m_window(sf::Vector2u(800, 600), "Window"),
-	m_player(sf::Vector2f(800 / 2, 500), sf::Vector2f(100, 25), 5)
+	m_player(sf::Vector2f(800 / 2, 550), sf::Vector2f(100, 25), 5)
 {
-	for (int j = 1; j < 3; j++)
+	for (int j = 1; j < row; j++)
 	{
-		for (int i = 1; i < 13; i++)
+		for (int i = 1; i < col; i++)
 		{
 			Alien* alien = new Alien(sf::Vector2f(i * 58, j * 50), sf::Vector2f(40, 40));
 			m_alienList.push_back(alien);
@@ -48,6 +48,9 @@ void Game::Update()
 	}
 
 	m_player.Update();
+
+	//Move aliens based on positions
+	MoveAliens();
 	
 	//Bullet cleanup if off the screen, otherwise update
 	for (std::vector<Bullet*>::const_iterator iter = m_bulletList.begin(); iter != m_bulletList.end();)
@@ -65,24 +68,7 @@ void Game::Update()
 
 	//Handle the collisions of bullets and aliens
 	//TODO - Maybe use a linked list instead of vector for aliens?
-	for (std::vector<Bullet*>::iterator bulletIter = m_bulletList.begin(); bulletIter != m_bulletList.end(); bulletIter++)
-	{
-		for (std::vector<Alien*>::iterator alienIter = m_alienList.begin(); alienIter != m_alienList.end();)
-		{
-			if (HasCollided(*bulletIter, *alienIter))
-			{
-				HandleCollision(alienIter);
-				if (BulletListEmpty(bulletIter))
-				{
-					return;
-				}
-			}
-			else
-			{
-				alienIter++;
-			}
-		}
-	}
+	HandleCollisions();
 }
 
 void Game::Render()
@@ -106,6 +92,7 @@ void Game::Render()
 bool Game::HasCollided(Bullet* const bullet, Alien* const alien)
 {
 	if (bullet->GetPosition().y <= alien->GetPosition().y + alien->GetSize().y &&
+		bullet->GetPosition().y >= alien->GetPosition().y &&
 		bullet->GetPosition().x >= alien->GetPosition().x &&
 		bullet->GetPosition().x <= alien->GetPosition().x + alien->GetSize().x)
 	{
@@ -115,7 +102,7 @@ bool Game::HasCollided(Bullet* const bullet, Alien* const alien)
 	return false;
 }
 
-void Game::HandleCollision(std::vector<Alien*>::const_iterator& alienIter)
+void Game::AlienCleanup(std::vector<Alien*>::const_iterator& alienIter)
 {
 	if (alienIter == m_alienList.end() - 1)
 	{
@@ -146,5 +133,56 @@ bool Game::BulletListEmpty(std::vector<Bullet*>::const_iterator& bulletIter)
 	{
 		bulletIter = m_bulletList.erase(bulletIter);
 		return false;
+	}
+}
+
+void Game::MoveAliens()
+{
+	for (int count = 0; count < m_alienList.size(); count++)
+	{
+		if (m_alienList[count]->GetPosition().x + m_alienList[count]->GetSize().x >= 800 &&
+			m_alienList[count]->GetMoveDir() > 0)
+		{
+			for (int count = 0; count < m_alienList.size(); count++)
+			{
+				m_alienList[count]->ShiftDown();
+				m_alienList[count]->InvertDir();
+			}
+		}
+		else if (m_alienList[count]->GetPosition().x <= 0 &&
+			m_alienList[count]->GetMoveDir() < 0)
+		{
+			for (int count = 0; count < m_alienList.size(); count++)
+			{
+				m_alienList[count]->ShiftDown();
+				m_alienList[count]->InvertDir();
+			}
+		}
+		else
+		{
+			m_alienList[count]->Move();
+		}
+	}
+}
+
+void Game::HandleCollisions()
+{
+	for (std::vector<Bullet*>::iterator bulletIter = m_bulletList.begin(); bulletIter != m_bulletList.end(); bulletIter++)
+	{
+		for (std::vector<Alien*>::iterator alienIter = m_alienList.begin(); alienIter != m_alienList.end();)
+		{
+			if (HasCollided(*bulletIter, *alienIter))
+			{
+				AlienCleanup(alienIter);
+				if (BulletListEmpty(bulletIter))
+				{
+					return;
+				}
+			}
+			else
+			{
+				alienIter++;
+			}
+		}
 	}
 }
