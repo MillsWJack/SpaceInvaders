@@ -35,7 +35,7 @@ void Alien::Render(sf::RenderWindow& window)
 void Alien::Move() 
 {
 	m_position.x += (m_moveDir * m_moveSpeed);
-	if ((int)m_position.x % 13 == 0)
+	if ((int)m_position.x % 40 == 0)
 	{
 		m_frame *= -1;
 	}

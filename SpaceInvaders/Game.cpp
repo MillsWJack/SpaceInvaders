@@ -2,7 +2,7 @@
 
 Game::Game():
 	m_window(sf::Vector2u(SCREEN_WIDTH, SCREEN_HEIGHT), "Window"),
-	m_player(sf::Vector2f(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 50), sf::Vector2f(100, 25), 5)
+	m_player(sf::Vector2f(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 50), 5)
 {
 	NewGame();
 }
@@ -57,7 +57,7 @@ void Game::Update()
 		}
 		if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Up)
 		{
-			Bullet* bullet = new Bullet(sf::Vector2f(4, 10), m_player.GetPosition());
+			Bullet* bullet = new Bullet(sf::Vector2f(6, 17), sf::Vector2f(m_player.GetPosition().x - 50, m_player.GetPosition().y));
 			m_bulletList.push_back(bullet);
 		}
 	}

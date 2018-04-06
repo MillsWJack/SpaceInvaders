@@ -1,11 +1,16 @@
 #include "Player.h"
 
-Player::Player(sf::Vector2f position, sf::Vector2f size, float speed):
+Player::Player(sf::Vector2f position, float speed):
 	m_position(position),
-	m_size(size),
 	m_moveSpeed(speed)
 {
-	m_rect.setSize(m_size);
+	m_image.loadFromFile("ship.png");
+	m_image.createMaskFromColor(sf::Color::Black);
+	m_texture.loadFromImage(m_image);
+	m_sprite.setTexture(m_texture);
+	m_sprite.setTextureRect(sf::IntRect(20, 95, 249, 153));
+	m_sprite.setOrigin(124, 76);
+	m_sprite.setScale(0.5, 0.5);
 }
 
 Player::~Player()
@@ -38,9 +43,8 @@ void Player::MoveRight()
 
 void Player::Render(sf::RenderWindow& window)
 {
-	m_rect.setPosition(m_position.x, m_position.y);
-	m_rect.setFillColor(sf::Color::Green);
-	window.draw(m_rect);
+	m_sprite.setPosition(m_position);
+	window.draw(m_sprite);
 }
 
 void Player::Update()

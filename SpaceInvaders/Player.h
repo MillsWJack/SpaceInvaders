@@ -3,7 +3,7 @@
 class Player
 {
 public:
-	Player(sf::Vector2f position, sf::Vector2f size, float speed);
+	Player(sf::Vector2f position, float speed);
 	~Player();
 
 	void MoveLeft();
@@ -16,7 +16,10 @@ public:
 private:
 	sf::Vector2f m_position;
 	sf::Vector2f m_size;
-	sf::RectangleShape m_rect;
+
+	sf::Texture m_texture;
+	sf::Sprite m_sprite;
+	sf::Image m_image;
 
 	float m_moveSpeed;
 };
