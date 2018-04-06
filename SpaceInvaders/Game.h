@@ -8,6 +8,7 @@
 
 #include <vector>
 #include <iostream>
+#include <string>
 
 class Game
 {
@@ -15,6 +16,7 @@ public:
 	Game();
 	~Game();
 
+	void NewGame(std::string text = "");
 	void HandleInput();
 	void Update();
 	void Render();
@@ -28,8 +30,10 @@ public:
 
 	inline window* GetWindow() { return &m_window; }
 
-	const int row = 4;
-	const int col = 13;
+	const int row = 6;
+	const int col = 25;
+	const int SCREEN_WIDTH = 1920;
+	const int SCREEN_HEIGHT = 1080;
 
 private:
 	window m_window;
@@ -38,5 +42,7 @@ private:
 
 	std::vector<Bullet*> m_bulletList;
 	std::vector<Alien*> m_alienList;
+
+	int frame;
 };
 

@@ -1,11 +1,24 @@
 #include "Alien.h"
 
-Alien::Alien(sf::Vector2f position, sf::Vector2f size):
+Alien::Alien(sf::Vector2f position, sf::Vector2f size, int sprite):
 	m_position(position),
-	m_size(size)
+	m_size(size),
+	m_alienType(sprite)
 {
-	m_rect.setSize(m_size);
 	m_moveDir = 1;
+	m_moveSpeed = 1;
+	m_frame = 1;
+	
+	m_image.loadFromFile("aliens.png");
+	m_image.createMaskFromColor(sf::Color::Black);
+	
+	m_texture.loadFromImage(m_image);
+	m_sprite.setTexture(m_texture);
+	
+	//Set texture rect to portion of image that has desired alien
+	SetSpriteRect();
+
+	m_sprite.setPosition(m_position);
 }
 
 Alien::~Alien()
@@ -14,22 +27,64 @@ Alien::~Alien()
 
 void Alien::Render(sf::RenderWindow& window)
 {
-	m_rect.setPosition(m_position);
-	m_rect.setFillColor(sf::Color::Green);
-	window.draw(m_rect);
+	m_sprite.setPosition(m_position);
+	window.draw(m_sprite);
 }
 
-void Alien::Move() //Move based on current direction (- = left, + = right)
+//Move based on current direction (- = left, + = right)
+void Alien::Move() 
 {
-	m_position.x += m_moveDir;
+	m_position.x += (m_moveDir * m_moveSpeed);
+	if ((int)m_position.x % 13 == 0)
+	{
+		m_frame *= -1;
+	}
+	SetSpriteRect();
 }
 
-void Alien::ShiftDown() //Shifts position down by amount
+//Shifts position down by amount
+void Alien::ShiftDown()
 {
 	m_position.y += 40;
+	SetMoveSpeed(0.3);
 }
 
-void Alien::InvertDir() //Inverts current direction
+//Inverts current direction
+void Alien::InvertDir() 
 {
 	m_moveDir *= -1;
+}
+
+void Alien::SetSpriteRect()
+{
+	switch (m_frame)
+	{
+	case -1:
+		switch (m_alienType)
+		{
+		case 0:
+			m_sprite.setTextureRect(sf::IntRect(27, 20, 46, 66));
+			break;
+		case 1:
+			m_sprite.setTextureRect(sf::IntRect(18, 93, 62, 45));
+			break;
+		case 2:
+			m_sprite.setTextureRect(sf::IntRect(9, 167, 68, 45));
+			break;
+		}
+		break;
+	case 1:
+		switch (m_alienType)
+		{
+		case 0:
+			m_sprite.setTextureRect(sf::IntRect(98, 20, 46, 66));
+			break;
+		case 1:
+			m_sprite.setTextureRect(sf::IntRect(91, 93, 62, 45));
+			break;
+		case 2:
+			m_sprite.setTextureRect(sf::IntRect(88, 167, 68, 45));
+			break;
+		}
+	}
 }

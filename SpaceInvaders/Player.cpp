@@ -26,9 +26,9 @@ void Player::MoveLeft()
 
 void Player::MoveRight()
 {
-	if (m_position.x + m_size.x >= 800)
+	if (m_position.x + m_size.x >= 1920)
 	{
-		m_position.x = 800 - m_size.x;
+		m_position.x = 1920 - m_size.x;
 	}
 	else
 	{

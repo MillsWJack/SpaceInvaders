@@ -22,5 +22,5 @@ void Bullet::Render(sf::RenderWindow& window)
 
 void Bullet::Update()
 {
-	m_position.y -= 5;
+	m_position.y -= 15;
 }

@@ -1,23 +1,38 @@
 #include "Game.h"
 
 Game::Game():
-	m_window(sf::Vector2u(800, 600), "Window"),
-	m_player(sf::Vector2f(800 / 2, 550), sf::Vector2f(100, 25), 5)
+	m_window(sf::Vector2u(SCREEN_WIDTH, SCREEN_HEIGHT), "Window"),
+	m_player(sf::Vector2f(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 50), sf::Vector2f(100, 25), 5)
 {
-	for (int j = 1; j < row; j++)
-	{
-		for (int i = 1; i < col; i++)
-		{
-			Alien* alien = new Alien(sf::Vector2f(i * 58, j * 50), sf::Vector2f(40, 40));
-			m_alienList.push_back(alien);
-		}
-	}
+	NewGame();
 }
 
 Game::~Game()
 {
 }
 
+void Game::NewGame(std::string text)
+{
+	std::cout << text << std::endl;
+
+	//Removes all aliens before starting new game
+	m_alienList.clear();
+
+	int sprite = 0;
+	for (int j = 1; j < row; j++)
+	{
+		for (int i = 1; i < col; i++)
+		{
+			Alien* alien = new Alien(sf::Vector2f(i * 70, j * 52), sf::Vector2f(40, 40), sprite);
+			m_alienList.push_back(alien);
+		}
+		sprite++;
+		if (sprite > 2)
+		{
+			sprite = 0;
+		}
+	}
+}
 void Game::HandleInput()
 {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
@@ -114,6 +129,7 @@ void Game::AlienCleanup(std::vector<Alien*>::const_iterator& alienIter)
 		else
 		{
 			alienIter = m_alienList.end();
+			NewGame("YOU WIN");
 		}
 	}
 	else
@@ -140,7 +156,7 @@ void Game::MoveAliens()
 {
 	for (int count = 0; count < m_alienList.size(); count++)
 	{
-		if (m_alienList[count]->GetPosition().x + m_alienList[count]->GetSize().x >= 800 &&
+		if (m_alienList[count]->GetPosition().x + m_alienList[count]->GetSize().x >= SCREEN_WIDTH &&
 			m_alienList[count]->GetMoveDir() > 0)
 		{
 			for (int count = 0; count < m_alienList.size(); count++)
@@ -158,6 +174,10 @@ void Game::MoveAliens()
 				m_alienList[count]->InvertDir();
 			}
 		}
+		else if (m_alienList[count]->GetPosition().y + m_alienList[count]->GetSize().y > m_player.GetPosition().y)
+		{
+			NewGame("YOU LOSE");
+		}
 		else
 		{
 			m_alienList[count]->Move();
@@ -172,7 +192,7 @@ void Game::HandleCollisions()
 		for (std::vector<Alien*>::iterator alienIter = m_alienList.begin(); alienIter != m_alienList.end();)
 		{
 			if (HasCollided(*bulletIter, *alienIter))
-			{
+			{				
 				AlienCleanup(alienIter);
 				if (BulletListEmpty(bulletIter))
 				{
