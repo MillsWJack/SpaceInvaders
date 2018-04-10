@@ -5,6 +5,7 @@
 #include "Player.h"
 #include "Bullet.h"
 #include "Alien.h"
+#include "Sound.h"
 
 #include <vector>
 #include <iostream>
@@ -37,8 +38,8 @@ public:
 
 private:
 	window m_window;
-
 	Player m_player;
+	Sound m_sound;
 
 	std::vector<Bullet*> m_bulletList;
 	std::vector<Alien*> m_alienList;

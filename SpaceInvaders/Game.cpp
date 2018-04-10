@@ -59,6 +59,7 @@ void Game::Update()
 		{
 			Bullet* bullet = new Bullet(sf::Vector2f(6, 17), sf::Vector2f(m_player.GetPosition().x - 50, m_player.GetPosition().y));
 			m_bulletList.push_back(bullet);
+			m_sound.Play("fire.wav");
 		}
 	}
 
@@ -154,12 +155,12 @@ bool Game::BulletListEmpty(std::vector<Bullet*>::const_iterator& bulletIter)
 
 void Game::MoveAliens()
 {
-	for (int count = 0; count < m_alienList.size(); count++)
+	for (unsigned int count = 0; count < m_alienList.size(); count++)
 	{
 		if (m_alienList[count]->GetPosition().x + m_alienList[count]->GetSize().x >= SCREEN_WIDTH &&
 			m_alienList[count]->GetMoveDir() > 0)
 		{
-			for (int count = 0; count < m_alienList.size(); count++)
+			for (unsigned int count = 0; count < m_alienList.size(); count++)
 			{
 				m_alienList[count]->ShiftDown();
 				m_alienList[count]->InvertDir();
@@ -168,7 +169,7 @@ void Game::MoveAliens()
 		else if (m_alienList[count]->GetPosition().x <= 0 &&
 			m_alienList[count]->GetMoveDir() < 0)
 		{
-			for (int count = 0; count < m_alienList.size(); count++)
+			for (unsigned int count = 0; count < m_alienList.size(); count++)
 			{
 				m_alienList[count]->ShiftDown();
 				m_alienList[count]->InvertDir();
