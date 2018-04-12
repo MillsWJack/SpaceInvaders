@@ -59,7 +59,7 @@ void Game::Update()
 		{
 			Bullet* bullet = new Bullet(sf::Vector2f(6, 17), sf::Vector2f(m_player.GetPosition().x - 50, m_player.GetPosition().y));
 			m_bulletList.push_back(bullet);
-			m_sound.Play("fire.wav");
+			m_shotSound.Play("fire.wav");
 		}
 	}
 
@@ -137,6 +137,8 @@ void Game::AlienCleanup(std::vector<Alien*>::const_iterator& alienIter)
 	{
 		alienIter = m_alienList.erase(alienIter);
 	}
+
+	m_explodeSound.Play("explode.wav");
 }
 
 bool Game::BulletListEmpty(std::vector<Bullet*>::const_iterator& bulletIter)

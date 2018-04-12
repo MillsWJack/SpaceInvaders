@@ -39,7 +39,8 @@ public:
 private:
 	window m_window;
 	Player m_player;
-	Sound m_sound;
+	Sound m_shotSound;
+	Sound m_explodeSound;
 
 	std::vector<Bullet*> m_bulletList;
 	std::vector<Alien*> m_alienList;
