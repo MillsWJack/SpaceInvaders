@@ -11,9 +11,9 @@ Game::~Game()
 {
 }
 
-void Game::NewGame(std::string text)
+void Game::NewGame()
 {
-	std::cout << text << std::endl;
+	score = 0;
 
 	//Removes all aliens before starting new game
 	m_alienList.clear();
@@ -23,7 +23,7 @@ void Game::NewGame(std::string text)
 	{
 		for (int i = 1; i < col; i++)
 		{
-			Alien* alien = new Alien(sf::Vector2f(i * 70, j * 52), sf::Vector2f(40, 40), sprite);
+			Alien* alien = new Alien(sf::Vector2f(i * 100, j * 80), sprite);
 			m_alienList.push_back(alien);
 		}
 		sprite++;
@@ -43,6 +43,10 @@ void Game::HandleInput()
 	{
 		m_player.MoveRight();
 	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+	{
+		m_alienList.clear();
+	}
 }
 
 void Game::Update()
@@ -55,7 +59,8 @@ void Game::Update()
 		{
 			m_window.SetDone(true);
 		}
-		if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Up)
+		if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Up &&
+			m_bulletList.size() < 1)
 		{
 			Bullet* bullet = new Bullet(sf::Vector2f(6, 17), sf::Vector2f(m_player.GetPosition().x - 50, m_player.GetPosition().y));
 			m_bulletList.push_back(bullet);
@@ -65,22 +70,16 @@ void Game::Update()
 
 	m_player.Update();
 
+	m_scoreTitle.DrawText("Score: ", { 0,0 });
+	m_scoreFigure.DrawText(std::to_string(score), { 100, 0 });
+
 	//Move aliens based on positions
 	MoveAliens();
 	
 	//Bullet cleanup if off the screen, otherwise update
-	for (std::vector<Bullet*>::const_iterator iter = m_bulletList.begin(); iter != m_bulletList.end();)
-	{
-		if ((*iter)->GetPosition().y < 0)
-		{
-			iter = m_bulletList.erase(iter);
-		}
-		else
-		{
-			(*iter)->Update();
-			iter++;
-		}
-	}
+	//Original game was 1 bullet at any given time,
+	//Change the input handler (m_bulletList.size() < 1) to change
+	BulletCleanup();
 
 	//Handle the collisions of bullets and aliens
 	//TODO - Maybe use a linked list instead of vector for aliens?
@@ -92,6 +91,9 @@ void Game::Render()
 	m_window.BeginDraw();
 
 	m_player.Render(*(m_window.GetRenderWindow()));
+
+	m_scoreTitle.Render(*(m_window.GetRenderWindow()));
+	m_scoreFigure.Render(*(m_window.GetRenderWindow()));
 	
 	for (std::vector<Bullet*>::const_iterator iter = m_bulletList.begin(); iter != m_bulletList.end(); iter++)
 	{
@@ -107,10 +109,10 @@ void Game::Render()
 
 bool Game::HasCollided(Bullet* const bullet, Alien* const alien)
 {
-	if (bullet->GetPosition().y <= alien->GetPosition().y + alien->GetSize().y &&
+	if (bullet->GetPosition().y <= alien->GetPosition().y + alien->GetSize().height &&
 		bullet->GetPosition().y >= alien->GetPosition().y &&
 		bullet->GetPosition().x >= alien->GetPosition().x &&
-		bullet->GetPosition().x <= alien->GetPosition().x + alien->GetSize().x)
+		bullet->GetPosition().x <= alien->GetPosition().x + alien->GetSize().width)
 	{
 		return true;
 	}
@@ -130,7 +132,7 @@ void Game::AlienCleanup(std::vector<Alien*>::const_iterator& alienIter)
 		else
 		{
 			alienIter = m_alienList.end();
-			NewGame("YOU WIN");
+			NewGame();
 		}
 	}
 	else
@@ -139,6 +141,23 @@ void Game::AlienCleanup(std::vector<Alien*>::const_iterator& alienIter)
 	}
 
 	m_explodeSound.Play("explode.wav");
+	score += 10;
+}
+
+void Game::BulletCleanup()
+{
+	for (std::vector<Bullet*>::const_iterator iter = m_bulletList.begin(); iter != m_bulletList.end();)
+	{
+		if ((*iter)->GetPosition().y < 0)
+		{
+			iter = m_bulletList.erase(iter);
+		}
+		else
+		{
+			(*iter)->Update();
+			iter++;
+		}
+	}
 }
 
 bool Game::BulletListEmpty(std::vector<Bullet*>::const_iterator& bulletIter)
@@ -159,7 +178,7 @@ void Game::MoveAliens()
 {
 	for (unsigned int count = 0; count < m_alienList.size(); count++)
 	{
-		if (m_alienList[count]->GetPosition().x + m_alienList[count]->GetSize().x >= SCREEN_WIDTH &&
+		if (m_alienList[count]->GetPosition().x + m_alienList[count]->GetSize().width >= SCREEN_WIDTH &&
 			m_alienList[count]->GetMoveDir() > 0)
 		{
 			for (unsigned int count = 0; count < m_alienList.size(); count++)
@@ -177,9 +196,9 @@ void Game::MoveAliens()
 				m_alienList[count]->InvertDir();
 			}
 		}
-		else if (m_alienList[count]->GetPosition().y + m_alienList[count]->GetSize().y > m_player.GetPosition().y)
+		else if (m_alienList[count]->GetPosition().y + m_alienList[count]->GetSize().height > m_player.GetPosition().y)
 		{
-			NewGame("YOU LOSE");
+			NewGame();
 		}
 		else
 		{

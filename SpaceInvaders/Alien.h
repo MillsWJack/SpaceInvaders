@@ -4,7 +4,7 @@
 class Alien
 {
 public:
-	Alien(sf::Vector2f position, sf::Vector2f size, int sprite = 0);
+	Alien(sf::Vector2f position, int sprite = 0);
 	~Alien();
 
 	void Render(sf::RenderWindow& window);
@@ -16,18 +16,20 @@ public:
 
 
 	sf::Vector2f& GetPosition() { return m_position; }
-	sf::Vector2f& GetSize() { return m_size; }
+	sf::IntRect& GetSize() { return m_size; }
 	int GetMoveDir() { return m_moveDir; }
 
 	void SetMoveSpeed(float setter) { m_moveSpeed += setter; }
 
 private:
 	sf::Vector2f m_position;
-	sf::Vector2f m_size;
+	sf::IntRect m_size;
 
 	sf::Texture m_texture;
 	sf::Sprite m_sprite;
 	sf::Image m_image;
+
+	sf::RectangleShape m_shape;
 
 	int m_moveDir;
 	int m_frame;

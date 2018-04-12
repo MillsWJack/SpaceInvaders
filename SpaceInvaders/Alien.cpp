@@ -1,14 +1,13 @@
 #include "Alien.h"
 
-Alien::Alien(sf::Vector2f position, sf::Vector2f size, int sprite):
+Alien::Alien(sf::Vector2f position, int sprite):
 	m_position(position),
-	m_size(size),
 	m_alienType(sprite)
 {
 	m_moveDir = 1;
 	m_moveSpeed = 1;
 	m_frame = 1;
-	
+
 	m_image.loadFromFile("aliens.png");
 	m_image.createMaskFromColor(sf::Color::Black);
 	
@@ -19,6 +18,7 @@ Alien::Alien(sf::Vector2f position, sf::Vector2f size, int sprite):
 	SetSpriteRect();
 
 	m_sprite.setPosition(m_position);
+	m_size = m_sprite.getTextureRect();
 }
 
 Alien::~Alien()
@@ -35,7 +35,7 @@ void Alien::Render(sf::RenderWindow& window)
 void Alien::Move() 
 {
 	m_position.x += (m_moveDir * m_moveSpeed);
-	if ((int)m_position.x % 40 == 0)
+	if ((int)m_position.x % 20 == 0)
 	{
 		m_frame *= -1;
 	}
