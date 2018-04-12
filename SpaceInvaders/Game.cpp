@@ -43,10 +43,6 @@ void Game::HandleInput()
 	{
 		m_player.MoveRight();
 	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-	{
-		m_alienList.clear();
-	}
 }
 
 void Game::Update()
@@ -59,7 +55,7 @@ void Game::Update()
 		{
 			m_window.SetDone(true);
 		}
-		if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Up &&
+		if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space &&
 			m_bulletList.size() < 1)
 		{
 			Bullet* bullet = new Bullet(sf::Vector2f(6, 17), sf::Vector2f(m_player.GetPosition().x - 50, m_player.GetPosition().y));
